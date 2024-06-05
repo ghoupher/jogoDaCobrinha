@@ -8,6 +8,8 @@ Snake[0] = {
 }
 
 let direction = "right";
+let gameInterval 
+let isGamePaused = false
 
 function criarBG(){ //função criar jogo 
 
@@ -16,30 +18,74 @@ function criarBG(){ //função criar jogo
 }
 
 function criarSnake() {
-
     for(i=0; i < Snake.length; i++) {
         context.fillStyle = "green";
         context.fillRect(Snake[i].x, Snake[i].y, box, box);
     }
+    console.log("-------- SNAKE", Snake)
 }
 
+function updateSnakePosition() {
+    let snakeX = Snake[0].x
+    let snakeY = Snake[0].y
+    console.log("------------- X", Snake.x)
 
-// document.addEventListener("keydown", updateDirection)
+    if (direction == "right") snakeX += box;
+    if (direction == "left") snakeX -= box;
+    if (direction == "up") snakeY -= box;
+    if (direction == "down") snakeY += box;
 
-// function updateDirection(event) {
-//     if(event.keyCode == 37 && direction != "right") direction = "left" 
-//     if(event.keyCode == 38 && direction != "down") direction = "up" 
-//     if(event.keyCode == 39 && direction != "left") direction = "right" 
-//     if(event.keyCode == 40 && direction != "up") direction = "down"
+    Snake.pop();
 
-//     console.log("--------------- Direction now ", direction)
-// }
+    let newHead = {
+        x: snakeX,
+        y: snakeY,
+    }
+
+    Snake.unshift(newHead);
+}
+
+document.addEventListener("keydown", pauseGame)
+document.addEventListener("keydown", updateDirection)
+
+function updateDirection(event) {
+    if(event.keyCode == 37 && direction != "right") direction = "left" 
+    if(event.keyCode == 38 && direction != "down") direction = "up" 
+    if(event.keyCode == 39 && direction != "left") direction = "right" 
+    if(event.keyCode == 40 && direction != "up") direction = "down"
+
+    console.log("--------------- Direction now ", event)
+}
+
+function pauseGame(event) {
+    if(event.keyCode == 27) {
+        console.log("test")
+        isGamePaused 
+            ? gameInterval = setInterval(iniciarJogo, 150) 
+            : clearInterval(gameInterval)
+        isGamePaused = !isGamePaused;
+    }
+}
 
 function iniciarJogo() {
     criarBG();
     criarSnake();
+    updateSnakePosition();
+    addObstacle()
 }
 
-iniciarJogo()
+function getRandomInt(max) {
+    return Math.floor(Math.random() * box * 8);
+  }
+
+function addObstacle() {
+    context.fillRect(getRandomInt(), getRandomInt(), 1 * box, 1 * box);
+}
+
+// obstacleInterval = setInterval(addObstacle, 5000)
+
+gameInterval = setInterval(iniciarJogo, 1000)
+
+console.log("---------- game interval ". gameInterval)
 
 
